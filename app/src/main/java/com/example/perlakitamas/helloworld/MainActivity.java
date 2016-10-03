@@ -1,5 +1,6 @@
 package com.example.perlakitamas.helloworld;
 
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,9 @@ import io.fabric.sdk.android.Fabric;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainScreen {
+
+    public static final String INTENT_EXTRA_CITY_KEY = "city";
+
     private MainPresenter mainPresenter;
 
     private RecyclerView mRecyclerView;
@@ -32,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new MainAdapter();
+        mAdapter = new MainAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
         mainPresenter = MainPresenter.getInstance();
@@ -47,5 +51,11 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
                 addCityDialog.show(fm, "add_city");
             }
         });
+    }
+
+    public void startDetailsActivity(String message) {
+        Intent intent = new Intent(this, DetailsActivity.class);
+        intent.putExtra(INTENT_EXTRA_CITY_KEY, message);
+        startActivity(intent);
     }
 }
