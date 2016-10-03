@@ -17,7 +17,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     private List<String> mDataSet;
 
     public MainAdapter() {
-        this.mDataSet = new ArrayList<>();
+        this.mDataSet = Arrays.asList("Budapest", "New York", "Tokyo");
     }
 
     @Override
