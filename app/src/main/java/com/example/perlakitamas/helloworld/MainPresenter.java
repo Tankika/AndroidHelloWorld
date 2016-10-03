@@ -7,14 +7,11 @@ public class MainPresenter {
 
     private static MainPresenter instance;
 
-    protected MainScreen screen;
+    protected MainScreen screen = null;
 
-    protected RecyclerView.Adapter mainAdapter;
+    protected RecyclerView.Adapter mainAdapter = null;
 
-    private MainPresenter() {
-        screen = null;
-        instance = null;
-    }
+    private MainPresenter() {}
 
     public static MainPresenter getInstance() {
         if(instance == null) {

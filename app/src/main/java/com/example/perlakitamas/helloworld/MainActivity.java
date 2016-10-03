@@ -53,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mainPresenter.detachView();
+    }
+
     public void startDetailsActivity(String message) {
         Intent intent = new Intent(this, DetailsActivity.class);
         intent.putExtra(INTENT_EXTRA_CITY_KEY, message);

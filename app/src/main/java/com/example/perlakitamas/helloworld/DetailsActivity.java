@@ -20,6 +20,8 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import com.example.perlakitamas.helloworld.weather.bean.WeatherData;
+
 public class DetailsActivity extends AppCompatActivity implements DetailsScreen {
 
     /**
@@ -62,6 +64,11 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        detailsPresenter.detachView();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -95,6 +102,8 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        private DetailsPresenter detailsPresenter;
+
         public PlaceholderFragment() {
         }
 
@@ -102,21 +111,27 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(DetailsPresenter detailsPresenter, int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
+            fragment.detailsPresenter = detailsPresenter;
             return fragment;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            WeatherData weatherData = detailsPresenter.attach(this);
+
             View rootView = inflater.inflate(R.layout.fragment_details, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
+        }
+
+        public void initialize(WeatherData weatherData) {
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(weatherData.getName());
         }
     }
 
@@ -134,7 +149,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            return PlaceholderFragment.newInstance(detailsPresenter, position + 1);
         }
 
         @Override
