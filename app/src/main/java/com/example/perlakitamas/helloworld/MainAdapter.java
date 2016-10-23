@@ -39,12 +39,19 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         return mainPresenter.getCityList().size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView mTextView;
         public ViewHolder(View v) {
             super(v);
+
             mTextView = (TextView)v.findViewById(R.id.row_city_name);
+            mTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mainActivity.startDetailsActivity(((TextView)v).getText().toString());
+                }
+            });
         }
     }
 }
