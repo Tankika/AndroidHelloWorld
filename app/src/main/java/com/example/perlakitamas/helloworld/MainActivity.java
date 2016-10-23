@@ -19,6 +19,9 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        mainPresenter = MainPresenter.getInstance();
+        mainPresenter.attachView(this);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -29,11 +32,8 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new MainAdapter();
+        mAdapter = new MainAdapter(mainPresenter);
         mRecyclerView.setAdapter(mAdapter);
-
-        mainPresenter = MainPresenter.getInstance();
-        mainPresenter.attachView(this, mAdapter);
 
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
         myFab.setOnClickListener(new View.OnClickListener() {
@@ -44,5 +44,9 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
                 addCityDialog.show(fm, "add_city");
             }
         });
+    }
+
+    public void addCity(String city) {
+        mainPresenter.addCity(city);
     }
 }

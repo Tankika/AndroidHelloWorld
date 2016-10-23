@@ -34,7 +34,11 @@ public class AddCityDialog extends DialogFragment implements TextView.OnEditorAc
     @Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         if(EditorInfo.IME_ACTION_DONE == actionId) {
-            getActivity();
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.addCity(mEditText.getText().toString());
+            dismiss();
+
+            return true;
         }
 
         return false;
