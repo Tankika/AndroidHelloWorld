@@ -2,8 +2,6 @@ package com.example.perlakitamas.helloworld;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -21,6 +19,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.perlakitamas.helloworld.weather.bean.WeatherData;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class DetailsActivity extends AppCompatActivity implements DetailsScreen {
 
@@ -67,7 +69,7 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        detailsPresenter.detachView();
+       // detailsPresenter.detachView();
     }
 
     @Override
@@ -92,46 +94,58 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+    public static class MainInfoFragment extends Fragment {
 
-        private DetailsPresenter detailsPresenter;
+        private static final String ARG_PRESENTER = "ARG_PRESENTER";
+        private View rootView;
 
-        public PlaceholderFragment() {
+        public MainInfoFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(DetailsPresenter detailsPresenter, int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static MainInfoFragment newInstance(DetailsPresenter detailsPresenter) {
+            MainInfoFragment fragment = new MainInfoFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putSerializable(ARG_PRESENTER, detailsPresenter);
             fragment.setArguments(args);
-            fragment.detailsPresenter = detailsPresenter;
+
             return fragment;
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            WeatherData weatherData = detailsPresenter.attach(this);
 
-            View rootView = inflater.inflate(R.layout.fragment_details, container, false);
+            rootView = inflater.inflate(R.layout.fragment_details, container, false);
+            DetailsPresenter detailsPresenter = (DetailsPresenter) getArguments().getSerializable(ARG_PRESENTER);
+            initialize(detailsPresenter.getWeatherData());
+
             return rootView;
         }
 
+        @Subscribe(threadMode = ThreadMode.MAIN)
+        public void onWeatherDataLoaded(DetailsPresenter.WeatherLoadedEvent weatherLoadedEvent) {
+            initialize(weatherLoadedEvent.getWeatherData());
+        }
+
         public void initialize(WeatherData weatherData) {
+            if(weatherData == null) {
+                return;
+            }
+
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(weatherData.getName());
+            textView.setText(weatherData.getWeather().get(0).getMain());
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            EventBus.getDefault().register(this);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            EventBus.getDefault().unregister(this);
         }
     }
 
@@ -147,9 +161,11 @@ public class DetailsActivity extends AppCompatActivity implements DetailsScreen 
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(detailsPresenter, position + 1);
+            if(position == 0) {
+                return MainInfoFragment.newInstance(detailsPresenter);
+            } else {
+                return MainInfoFragment.newInstance(detailsPresenter);
+            }
         }
 
         @Override

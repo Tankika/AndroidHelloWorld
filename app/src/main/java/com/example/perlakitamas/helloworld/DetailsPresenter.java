@@ -1,9 +1,11 @@
 package com.example.perlakitamas.helloworld;
 
-import android.support.v7.widget.RecyclerView;
-
 import com.crashlytics.android.Crashlytics;
 import com.example.perlakitamas.helloworld.weather.bean.WeatherData;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.Serializable;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -11,13 +13,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DetailsPresenter {
+public class DetailsPresenter implements Serializable {
 
-    private DetailsActivity.PlaceholderFragment fragment;
-    private WeatherData weatherData;
+    private DetailsActivity.MainInfoFragment fragment;
 
     private static String city;
     private static DetailsPresenter instance = null;
+
+    private WeatherData weatherData;
 
     private DetailsPresenter() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -30,7 +33,12 @@ public class DetailsPresenter {
         openWeatherApi.getWeatherData(city).enqueue(new Callback<WeatherData>() {
             @Override
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
-                weatherData = response.body();
+                if(response.body() != null) {
+                    weatherData = response.body();
+                    EventBus.getDefault().post(new WeatherLoadedEvent(response.body()));
+                } else {
+                    throw new RuntimeException(response.errorBody().toString());
+                }
             }
 
             @Override
@@ -43,7 +51,7 @@ public class DetailsPresenter {
     }
 
     public static DetailsPresenter getInstance(String city) {
-        if(instance == null || DetailsPresenter.city != city) {
+        if(instance == null || city != null && !city.equals(DetailsPresenter.city)) {
             DetailsPresenter.city = city;
 
             instance = new DetailsPresenter();
@@ -51,19 +59,27 @@ public class DetailsPresenter {
         return instance;
     }
 
-    public void attachView(DetailsScreen screen) {
-        this.screen = screen;
+    public WeatherData getWeatherData() {
+        return weatherData;
     }
 
-    public void detachView() {
-        this.screen = null;
-    }
+    //    public void attachView(DetailsScreen screen) {
+//        this.screen = screen;
+//    }
+//
+//    public void detachView() {
+//        this.screen = null;
+//    }
 
-    public WeatherData attach(DetailsActivity.PlaceholderFragment fragment) {
-        if(weatherData == null) {
-            this.fragment = fragment;
+    public static class WeatherLoadedEvent {
+        private WeatherData weatherData;
+
+        public WeatherLoadedEvent(WeatherData weatherData) {
+            this.weatherData = weatherData;
         }
 
-        return weatherData;
+        public WeatherData getWeatherData() {
+            return weatherData;
+        }
     }
 }
