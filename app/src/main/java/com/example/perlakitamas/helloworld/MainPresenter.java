@@ -40,6 +40,8 @@ public class MainPresenter {
         cityList.add(city);
     }
 
+    public void removeCity(String city) { cityList.remove(city); }
+
     public List<String> getCityList() {
         return Collections.unmodifiableList(cityList);
     }

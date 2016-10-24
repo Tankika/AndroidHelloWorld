@@ -33,12 +33,8 @@ public class DetailsPresenter implements Serializable {
         openWeatherApi.getWeatherData(city).enqueue(new Callback<WeatherData>() {
             @Override
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
-                if(response.body() != null) {
-                    weatherData = response.body();
-                    EventBus.getDefault().post(new WeatherLoadedEvent(response.body()));
-                } else {
-                    throw new RuntimeException(response.errorBody().toString());
-                }
+                weatherData = response.body();
+                EventBus.getDefault().post(new WeatherLoadedEvent(response.body()));
             }
 
             @Override

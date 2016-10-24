@@ -1,9 +1,11 @@
 package com.example.perlakitamas.helloworld;
 
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -14,9 +16,12 @@ import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
+    private MainActivity mainActivity;
     private MainPresenter mainPresenter;
 
-    public MainAdapter(MainPresenter mainPresenter) {
+    public MainAdapter(MainActivity mainActivity, MainPresenter mainPresenter)
+    {
+        this.mainActivity = mainActivity;
         this.mainPresenter = mainPresenter;
     }
 
@@ -50,6 +55,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     mainActivity.startDetailsActivity(((TextView)v).getText().toString());
+                }
+            });
+
+            ImageView deleteImageView = (ImageView) v.findViewById(R.id.row_delete_city);
+            deleteImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mainPresenter.removeCity(mTextView.getText().toString());
+                    notifyDataSetChanged();
                 }
             });
         }

@@ -1,5 +1,6 @@
 package com.example.perlakitamas.helloworld;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -11,7 +12,6 @@ import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 import io.fabric.sdk.android.Fabric;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements MainScreen {
 
@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new MainAdapter(mainPresenter);
+        mAdapter = new MainAdapter(this, mainPresenter);
         mRecyclerView.setAdapter(mAdapter);
 
         FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
@@ -67,5 +67,6 @@ public class MainActivity extends AppCompatActivity implements MainScreen {
 
     public void addCity(String city) {
         mainPresenter.addCity(city);
+        mAdapter.notifyDataSetChanged();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.perlakitamas.helloworld;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.perlakitamas.helloworld.weather.bean.WeatherData;
 
