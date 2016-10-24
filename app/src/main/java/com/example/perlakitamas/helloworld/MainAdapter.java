@@ -14,12 +14,10 @@ import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private MainActivity mainActivity;
-    private List<String> mDataSet;
+    private MainPresenter mainPresenter;
 
-    public MainAdapter(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
-        this.mDataSet = Arrays.asList("Budapest", "New York", "Tokyo");
+    public MainAdapter(MainPresenter mainPresenter) {
+        this.mainPresenter = mainPresenter;
     }
 
     @Override
@@ -33,12 +31,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mTextView.setText(mDataSet.get(position));
+        holder.mTextView.setText(mainPresenter.getCityList().get(position));
     }
 
     @Override
     public int getItemCount() {
-        return mDataSet.size();
+        return mainPresenter.getCityList().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

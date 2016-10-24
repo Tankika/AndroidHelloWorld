@@ -3,15 +3,23 @@ package com.example.perlakitamas.helloworld;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class MainPresenter {
 
     private static MainPresenter instance;
 
-    protected MainScreen screen = null;
+    protected MainScreen screen;
 
-    protected RecyclerView.Adapter mainAdapter = null;
+    private List<String> cityList;
 
-    private MainPresenter() {}
+    private MainPresenter() {
+        screen = null;
+        instance = null;
+        cityList = new ArrayList<>();
+    }
 
     public static MainPresenter getInstance() {
         if(instance == null) {
@@ -20,13 +28,20 @@ public class MainPresenter {
         return instance;
     }
 
-    public void attachView(MainScreen screen, RecyclerView.Adapter mainAdapter) {
+    public void attachView(MainScreen screen) {
         this.screen = screen;
-        this.mainAdapter = mainAdapter;
     }
 
     public void detachView() {
         this.screen = null;
-        this.mainAdapter = null;
     }
+
+    public void addCity(String city) {
+        cityList.add(city);
+    }
+
+    public List<String> getCityList() {
+        return Collections.unmodifiableList(cityList);
+    }
+
 }
